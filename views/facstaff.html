@@ -1,0 +1,57 @@
+<div style="margin:auto; width:900px; margin-top:35px">
+	<div infinite-scroll="loadMore()" infinite-scroll-distance="1">
+		<div class="searchContainer">
+			<form class="form-horizontal">
+				<div class="form-group">
+					<label class="control-label col-sm-2">Search:</label>  
+					<div class="col-sm-1">
+						<input maxlength="17" class="searchBox form-control" ng-model="searchText">
+						<a class="searchX" style="cursor:pointer" ng-click="searchText=''"><span class="glyphicon glyphicon-remove-circle"></span></a> 
+					</div>
+				</div>
+			</form>
+			
+		</div>
+		<div class="table-responsive">
+			<table class="table table-hover facstaffTable">
+				<tbody>
+				<tr ng-repeat="user in facstaff | filter: searchText | orderBy: 'last_name' | filter:{roles:'Faculty'} | limitTo:limitToDisplay"> 
+					<td>
+						<div class="facstaffHeader checkContainer">
+							<img ng-src='/img/green_check.png' class="checkMark" ng-show="checkCert(user.person_pk)==='green'" />
+							<img ng-src='/img/red_check.png' class="checkMark" ng-show="checkCert(user.person_pk)==='red'" />
+							<img ng-src='/img/yellow_yield.png' class="checkMark" ng-show="checkCert(user.person_pk)==='yellow'" />
+							<img ng-src='/img/empty_circle.png' class="checkMark" ng-show="checkCert(user.person_pk)===''" />
+						</div>
+						<div class="facstaffHeader personalInfoDiv">
+							<h3>{{user.nick_first_name}} {{user.last_name}}</h3>
+							<h4>{{user.email_1 || "no email listed"}}</h4>
+							<p>Latest Certifcation: <mark>{{getLatestCert(user.person_pk) || "no cert"}}</mark></p>
+							<button class="btn btn-primary" ng-class="hasCertToday(user.person_pk)" style="height:35px" ng-click="hasCertToday(user.person_pk) || saveCertDate(user)"><span class="glyphicon glyphicon-plus"></span>  Quick Cert</button>
+							<button class="btn btn-info" style="height:35px" ng-click="viewHistory = ! viewHistory"><span class="glyphicon glyphicon-eye-open"></span>  Cert History</button>
+						</div>
+						<div class="certContainer facstaffHeader">
+							<div class="certHistory">
+								<div class="">
+									
+									
+									<div ng-repeat="cert in facstaffDB[user.person_pk].certs | orderBy:'-date' | limitTo:'4'">
+										
+										<div style="width:140px; padding-left:5px">
+											<h5><a style="cursor:pointer" ng-click="deleteCert(user, cert)"><span class="glyphicon glyphicon-remove-circle" style="position:relative; top:3px" aria-hidden="true" style="color:red"></span></a> {{cert.date | toDate | date : 'MMM dd y'}} 
+											</h5>
+										</div>
+									</div>
+									
+								</div>
+							</div>
+						</div>
+							<create-one-cert></create-one-cert>
+					</td>
+						
+				</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>

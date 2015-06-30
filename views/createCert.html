@@ -1,0 +1,6 @@
+<h4>Create New Cert</h4>
+<button ng-click="createCert = 'oneCert'">One Cert</button>
+<button ng-click="createCert = 'multiCert'">Multiple Certs</button>
+
+<create-one-cert ng-show="createCert === 'oneCert'"></create-one-cert>
+<create-multi-cert ng-show="createCert === 'multiCert'"></create-multi-cert>

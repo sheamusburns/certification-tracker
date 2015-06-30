@@ -1,0 +1,39 @@
+<div style="margin:auto; width:900px; margin-top:35px">
+	<h2>Certifications</h2>
+	<button class="btn btn-default" ng-click="certsFilter=''">Show All Certs</button>
+	<button class="btn btn-default" ng-click="certsFilter=sortBy('')">Show No Certs</button>
+	<button class="btn btn-default" ng-click="certsFilter=sortBy('red')">Show Expired</button>
+	<button class="btn btn-default" ng-click="certsFilter=sortBy('yellow')">Show Expiring</button>
+	<button class="btn btn-default" ng-click="certsFilter=sortBy('green')">Show Active</button>
+	<br />
+	<br />
+	<table class="table table-condensed table-bordered">
+		<thead>
+				<td>Name</td>
+				<td>Email</td>
+				<td>Certs</td>
+		</thead>
+		<tbody>
+			<tr ng-class="getCertClass(user.person_pk)" ng-repeat="user in facstaffDB | toArray | filter: certsFilter | orderBy: 'last_name'">
+				<td>
+					
+					<h5><a ng-class="hasCertToday(user.person_pk)" style="height:35px; cursor:pointer" ng-click="hasCertToday(user.person_pk) || saveCertDate(user)"><span class="glyphicon glyphicon-plus"></span></a> {{user.first_name}} {{user.last_name}}</h5></td>
+				<td><h5>{{user.email_1 || 'no email listed'}}</h5></td>
+				<td style='vertical-align:middle; width:160px'>
+						<div ng-show='!user.certs'>No Certs</div>
+						<div ng-class="getCertClass(user.person_pk)" ng-repeat="cert in user.certs | orderBy: '-date'">
+							<div class="certDateNotes" style="display:inline-block">
+								<a style="cursor:pointer" ng-click="deleteCert(user, cert)"><span class="glyphicon glyphicon-remove-circle" style="position:relative; top:3px" aria-hidden="true" style="color:red"></span></a> {{cert.date | date : 'mediumDate'}}
+							</div>
+							<div class="certDateNotes" style="display:inline-block">
+								<span ng-show="cert.notes !== ''">Notes: {{cert.notes}}</span>
+							</div>
+
+						</div>
+					
+				</td>
+
+			</tr>
+		</tbody>
+	</table>
+</div>

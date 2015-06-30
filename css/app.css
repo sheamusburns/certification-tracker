@@ -1,0 +1,78 @@
+body {
+	padding-top: 70px; 
+}
+.bodyContainer {
+	margin-top: 1000px;
+}
+.certDateNotes {
+	margin-left:15px;
+}
+.facstaffTable {
+	width:900px;
+}
+.facstaffTable > tbody > tr > td {
+	padding-left: 20px;
+}
+.searchContainer {
+	margin-bottom:30px;
+	font-size:1.4em;
+}
+.searchBox {
+	width:350px;
+	border-radius: 5px;
+	padding:8px;
+}
+.searchX {
+	position:relative;
+	left:317px;
+	bottom:28px;
+}
+
+.oneCertForm {
+	margin-top:18px;
+	margin-left:35px;
+}
+
+.textA {
+	resize: none;
+}
+.checkMark {
+	margin-top:23px;;
+	width:50px;
+	height:50px;
+}
+.checkContainer {
+	width:65px;
+}
+.facstaffHeader {
+	vertical-align: top;
+	/*padding-top:0px;*/
+	margin-top: 0px;
+	display: inline-block;
+}
+.certContainer {
+	position:relative;
+	top:15px;
+	display: inline-block;
+	border-left: thin solid gray;
+	border-right: thin solid gray;
+	height:140px;
+	width:180px;
+}
+.certHistory {
+	height:140px;
+	padding-left:32px;
+	padding-top: 11px;
+	margin-left:0px;
+	margin-bottom:0px;
+}
+.personalInfoDiv {
+	width:300px;
+}
+.upPage {
+	position:fixed;
+	bottom:20px;
+	left:20px;
+	color:green;
+
+}
