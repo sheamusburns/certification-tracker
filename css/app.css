@@ -13,6 +13,9 @@ body {
 .facstaffTable > tbody > tr > td {
 	padding-left: 20px;
 }
+.tableHead {
+	margin-left:12px;
+}
 .searchContainer {
 	margin-bottom:30px;
 	font-size:1.4em;

@@ -1,5 +1,5 @@
 
-chaperone.controller('FacstaffCtrl', ['$http', '$scope', '$firebaseObject', '$moment', function($http, $scope, $firebaseObject, $moment){
+chaperone.controller('FacstaffCtrl', ['$http', '$scope', '$firebaseObject', '$moment', '$window', function($http, $scope, $firebaseObject, $moment, $window){
 	console.log("controller loading");
 	var ref = new Firebase('https://blinding-inferno-9862.firebaseio.com/facstaff');
 	$scope.facstaffDB = $firebaseObject(ref);
@@ -29,6 +29,13 @@ chaperone.controller('FacstaffCtrl', ['$http', '$scope', '$firebaseObject', '$mo
 			$scope.facstaffDB[$scope.record.person_pk] = $scope.record;
 			console.log("this one's saved");
 			$scope.facstaffDB.$save();
+		} else {
+			var person = $scope.facstaffDB[$scope.record.person_pk];
+			if (!person.first_name === user.nick_first_name) person.first_name = user.nick_first_name;
+			if (!person.last_name === user.last_name) person.last_name = user.last_name;
+			if (!person.email_1 === user.email_1) person.email_1 = user.email_1;
+			console.log("entry updated");
+			$scope.facstaffDB.$save();
 		}
 	};
 
@@ -48,6 +55,7 @@ chaperone.controller('FacstaffCtrl', ['$http', '$scope', '$firebaseObject', '$mo
 			$scope.saveCertDate(user, date, notes);
 		}
 		else if (!person.certs) {
+			$scope.saveRecord(user);
 			person.certs = [];
 			certObj.date = now;
 			certObj.notes = notes;
@@ -55,6 +63,7 @@ chaperone.controller('FacstaffCtrl', ['$http', '$scope', '$firebaseObject', '$mo
 		} 
 		else {
 			var isRepeat = false;
+			$scope.saveRecord(user);
 			for (var i in person.certs) {
 				console.log("person: " + person.certs[i].date + "\nnow: " + now);
 				if (person.certs[i].date === now) isRepeat = true;
@@ -207,6 +216,12 @@ chaperone.controller('FacstaffCtrl', ['$http', '$scope', '$firebaseObject', '$mo
 		}
 	};
 
+	$scope.isLatestCert = function(cert, person_pk){
+		if ($scope.getLatestCert(person_pk) === $moment(cert.date).format('MMM DD YYYY')) {
+			return true;
+		}
+	}
+
 	$scope.getLatestCert = function(person_pk) {
 		if ($scope.facstaffDB[person_pk] && $scope.facstaffDB[person_pk].certs) {
 			var tempArray = [];
@@ -225,6 +240,44 @@ chaperone.controller('FacstaffCtrl', ['$http', '$scope', '$firebaseObject', '$mo
 		}
 	};
 
+	$scope.sortCertsBy = function(qualifier) {
+		if (qualifier === 'cert_date') {
+			return function(item) {
+				return $moment($scope.getLatestCert(item.person_pk));
+			};
+		} else {
+			return function(item) {
+				return item.last_name;
+			};
+		}
+	};
+
+	$scope.sortCerts = 'last_name';
+
+	$scope.emailCerts = function(){
+		var person;
+		var errorArray = [];
+		console.log(Array.isArray($scope.facstaffDB));
+		var emailArray = [];
+		for (key in $scope.facstaffDB) {
+			if (Number(key)) {
+				person = $scope.facstaffDB[key];
+					if ($scope.checkCert(person.person_pk) === 'red' || $scope.checkCert(person.person_pk) === 'yellow') {
+					if (person.email_1) {
+						emailArray.push(person.email_1);
+					} else {
+						errorArray.push(person.first_name + " " + person.last_name);
+					}
+				}
+			}
+		}
+		console.log(emailArray.slice(','));
+		var mailTo = "mailto:" + emailArray.slice(',');
+		var mailSubject = "?subject=Need to Recertify CPR";
+		var mailBody = "&body=Time to get recertified!";
+		$window.open(mailTo + mailSubject + mailBody);
+		alert("Warning: The following people do not have emails listed\n" + errorArray.slice(', '));
+	};
 	// $scope.certDates = function(person_pk) {
 	// 	if ($scope.facstaffDB[person_pk] && $scope.facstaffDB[person_pk].certs) {
 	// 		var arr = [];
