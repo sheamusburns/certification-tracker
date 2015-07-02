@@ -250,16 +250,19 @@ chaperone.controller('FacstaffCtrl', ['$http', '$scope', '$firebaseObject', '$mo
 	$scope.sortCertsBy = function(qualifier) {
 		if (qualifier === 'cert_date') {
 			return function(item) {
+				$scope.certSortVar = 'cert_date';
 				return $moment($scope.getLatestCert(item.person_pk));
 			};
 		} else {
 			return function(item) {
+				$scope.certSortVar = 'last_name';
 				return item.last_name;
 			};
 		}
 	};
 
 	$scope.sortCerts = 'last_name';
+	$scope.certSortVar = 'last_name';
 
 	$scope.emailCerts = function(status_arr){
 		var person;

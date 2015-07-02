@@ -9,6 +9,7 @@ body {
 }
 .facstaffTable {
 	width:900px;
+	margin:auto;
 }
 .facstaffTable > tbody > tr > td {
 	padding-left: 20px;
@@ -44,9 +45,7 @@ body {
 	width:50px;
 	height:50px;
 }
-.checkContainer {
-	width:65px;
-}
+
 .facstaffHeader {
 	vertical-align: top;
 	/*padding-top:0px;*/
@@ -71,6 +70,10 @@ body {
 }
 .personalInfoDiv {
 	width:300px;
+}
+
+.checkContainer {
+	width:65px;
 }
 .upPage {
 	position:fixed;

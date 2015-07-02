@@ -1,5 +1,4 @@
-<div style="margin:auto; width:900px; margin-top:20px">
-	<div infinite-scroll="loadMore()" infinite-scroll-distance="1">
+<div style="margin:auto; width:900px; margin-top:20px" infinite-scroll="loadMore()" infinite-scroll-distance="1">
 		<div class="searchContainer">
 			<form class="form-horizontal">
 				<div class="form-group">
@@ -28,21 +27,22 @@
 							<h4>{{user.email_1 || "no email listed"}}</h4>
 							<p>Latest Certifcation: <mark>{{getLatestCert(user.person_pk) || "no cert"}}</mark></p>
 							<button class="btn btn-primary" ng-class="hasCertToday(user.person_pk)" style="height:35px" ng-click="hasCertToday(user.person_pk) || saveCertDate(user)"><span class="glyphicon glyphicon-plus"></span>  Quick Cert</button>
-							<button class="btn btn-info" style="height:35px" ng-click="viewHistory = ! viewHistory"><span class="glyphicon glyphicon-eye-open"></span>  Cert History</button>
+							<!-- <button class="btn btn-info" style="height:35px" ng-click="viewHistory = ! viewHistory"><span class="glyphicon glyphicon-eye-open"></span>  Cert History</button> -->
 						</div>
 						<div class="certContainer facstaffHeader">
 							<div class="certHistory">
-								<div class="">
+								
+								<div ng-show="!facstaffDB[user.person_pk].certs">
+									<h5>No Certifications</h5>
+								</div>
+
+								<div ng-repeat="cert in facstaffDB[user.person_pk].certs | orderBy:'-date' | limitTo:'4'">
 									
-									
-									<div ng-repeat="cert in facstaffDB[user.person_pk].certs | orderBy:'-date' | limitTo:'4'">
-										
-										<div style="width:140px; padding-left:5px">
-											<h5><a style="cursor:pointer" ng-click="deleteCert(user, cert)"><span class="glyphicon glyphicon-remove-circle" style="position:relative; top:3px" aria-hidden="true" style="color:red"></span></a> {{cert.date | toDate | date : 'MMM dd y'}} 
-											</h5>
-										</div>
+									<div style="width:140px; padding-left:5px">
+										<h5><a style="cursor:pointer" ng-click="deleteCert(user, cert)"><span class="glyphicon glyphicon-remove-circle" style="position:relative; top:3px" aria-hidden="true" style="color:red"></span></a> {{cert.date | toDate | date : 'MMM dd y'}} 
+										</h5>
+
 									</div>
-									
 								</div>
 							</div>
 						</div>
@@ -53,5 +53,4 @@
 				</tbody>
 			</table>
 		</div>
-	</div>
 </div>

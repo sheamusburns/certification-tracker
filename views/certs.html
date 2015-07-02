@@ -3,9 +3,9 @@
 	<div class="btn-group" role="group">
 		<button class="btn btn-default" ng-click="certsFilter=''">All Certs</button>
 		<button class="btn btn-default" ng-click="certsFilter=sortBy('')">Certless</button>
-		<button class="btn btn-default" ng-click="certsFilter=sortBy('red')">Expired</button>
-		<button class="btn btn-default" ng-click="certsFilter=sortBy('yellow')">Expiring</button>
-		<button class="btn btn-default" ng-click="certsFilter=sortBy('green')">Active</button>
+		<button class="btn btn-danger" ng-click="certsFilter=sortBy('red')">Expired</button>
+		<button class="btn btn-warning" ng-click="certsFilter=sortBy('yellow')">Expiring</button>
+		<button class="btn btn-success" ng-click="certsFilter=sortBy('green')">Active</button>
 		<div class="btn-group">
 	  		<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 	    	Email <span class="caret"></span>
@@ -21,10 +21,10 @@
 	<br />
 	<table class="table table-condensed table-bordered" style="width:100%; margin:auto">
 		<thead>
-				<td><strong class="tableHead"><a ng-click="sortCerts=sortCertsBy('last_name')" style="cursor:pointer">Name</a></strong></td>
+				<td><strong class="tableHead"><a ng-click="sortCerts=sortCertsBy('last_name')" style="cursor:pointer">Name</a><span ng-show="certSortVar==='last_name'" class="caret"></span></strong></td>
 				<td><strong class="tableHead">Email</strong></td>
-				<td><strong class="tableHead"><a ng-click="sortCerts=sortCertsBy('cert_date')" style="cursor:pointer">Latest Cert</a></strong></td>
-				<td></td>
+				<td><strong class="tableHead"><a ng-click="sortCerts=sortCertsBy('cert_date')" style="cursor:pointer">Latest Cert</a><span ng-show="certSortVar==='cert_date'" class="caret"></span></strong></td>
+				<td><strong class="tableHead">Options</strong></td>
 		</thead>
 		<tbody>
 			<tr ng-class="getCertClass(user.person_pk)" ng-repeat="user in facstaffDB | toArray | filter: certsFilter | orderBy: sortCerts">
@@ -41,9 +41,9 @@
 								<a style="cursor:pointer" ng-click="deleteCert(user, cert)"><span class="glyphicon glyphicon-remove-circle" style="position:relative; top:3px" aria-hidden="true" style="color:red"></span></a> {{cert.date | date : 'mediumDate'}}
 								
 							</div>
-							<div class="certDateNotes" style="display:inline-block">
+							<!-- <div class="certDateNotes" style="display:inline-block">
 								<span ng-show="cert.notes !== ''">Notes: {{cert.notes}}</span>
-							</div>
+							</div> -->
 
 						</div>
 					
