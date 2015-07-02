@@ -39,6 +39,13 @@ chaperone.controller('FacstaffCtrl', ['$http', '$scope', '$firebaseObject', '$mo
 		}
 	};
 
+	$scope.deleteUser = function(user) {
+		if (confirm("Are you sure you want to delete this? You can't undo this.")) {
+			delete $scope.facstaffDB[user.person_pk];
+			$scope.facstaffDB.$save();
+		}
+	}
+
 	$scope.saveCertDate = function(user, date, notes) {
 		if (!date) {
 			date = false;
@@ -254,7 +261,7 @@ chaperone.controller('FacstaffCtrl', ['$http', '$scope', '$firebaseObject', '$mo
 
 	$scope.sortCerts = 'last_name';
 
-	$scope.emailCerts = function(){
+	$scope.emailCerts = function(status_arr){
 		var person;
 		var errorArray = [];
 		console.log(Array.isArray($scope.facstaffDB));
@@ -262,11 +269,13 @@ chaperone.controller('FacstaffCtrl', ['$http', '$scope', '$firebaseObject', '$mo
 		for (key in $scope.facstaffDB) {
 			if (Number(key)) {
 				person = $scope.facstaffDB[key];
-					if ($scope.checkCert(person.person_pk) === 'red' || $scope.checkCert(person.person_pk) === 'yellow') {
-					if (person.email_1) {
-						emailArray.push(person.email_1);
-					} else {
-						errorArray.push(person.first_name + " " + person.last_name);
+				for (var i = 0; i < status_arr.length; i++) {
+					if ($scope.checkCert(person.person_pk) === status_arr[i]) {
+						if (person.email_1) {
+							emailArray.push(person.email_1);
+						} else {
+							errorArray.push(person.first_name + " " + person.last_name);
+						}
 					}
 				}
 			}
@@ -276,7 +285,9 @@ chaperone.controller('FacstaffCtrl', ['$http', '$scope', '$firebaseObject', '$mo
 		var mailSubject = "?subject=Need to Recertify CPR";
 		var mailBody = "&body=Time to get recertified!";
 		$window.open(mailTo + mailSubject + mailBody);
-		alert("Warning: The following people do not have emails listed\n" + errorArray.slice(', '));
+		if (errorArray.length > 0) {
+			alert("Warning: The following people do not have emails listed\n" + errorArray.slice(', '));
+		}
 	};
 	// $scope.certDates = function(person_pk) {
 	// 	if ($scope.facstaffDB[person_pk] && $scope.facstaffDB[person_pk].certs) {

@@ -3,7 +3,7 @@ var chaperone = angular.module('Chaperone', ['firebase', 'ngRoute', 'angular-mom
 
 chaperone.config(function($routeProvider){
 	$routeProvider
-	.when('/search', {
+	.when('/', {
 		templateUrl: 'views/facstaff.html',
 		controller: 'FacstaffCtrl'
 	})
@@ -11,9 +11,6 @@ chaperone.config(function($routeProvider){
 		templateUrl: 'views/certs.html',
 		controller: 'FacstaffCtrl'
 	})
-	.when('/upcoming', {
-		templateUrl: 'views/upcoming.html'
-	});
 });
 
 chaperone.controller('MainCtrl', ['$scope', '$http', function($scope, $http){

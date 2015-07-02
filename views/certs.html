@@ -1,18 +1,30 @@
-<div style="margin:auto; width:660px; margin-top:35px">
+<div style="margin:auto; width:800px; margin-top:20px">
 	<h2>Certifications</h2>
-	<button class="btn btn-default" ng-click="certsFilter=''">Show All Certs</button>
-	<button class="btn btn-default" ng-click="certsFilter=sortBy('')">Show No Certs</button>
-	<button class="btn btn-default" ng-click="certsFilter=sortBy('red')">Show Expired</button>
-	<button class="btn btn-default" ng-click="certsFilter=sortBy('yellow')">Show Expiring</button>
-	<button class="btn btn-default" ng-click="certsFilter=sortBy('green')">Show Active</button>
-	<button class="btn btn-default" ng-click="emailCerts()">Email Upcoming/Expired Certs</button>
+	<div class="btn-group" role="group">
+		<button class="btn btn-default" ng-click="certsFilter=''">All Certs</button>
+		<button class="btn btn-default" ng-click="certsFilter=sortBy('')">Certless</button>
+		<button class="btn btn-default" ng-click="certsFilter=sortBy('red')">Expired</button>
+		<button class="btn btn-default" ng-click="certsFilter=sortBy('yellow')">Expiring</button>
+		<button class="btn btn-default" ng-click="certsFilter=sortBy('green')">Active</button>
+		<div class="btn-group">
+	  		<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+	    	Email <span class="caret"></span>
+	  		</button>
+	  		<ul class="dropdown-menu">
+	    		<li><a style="cursor:pointer" ng-click="emailCerts(['yellow'])">Expiring Only</a></li>
+	    		<li><a style="cursor:pointer" ng-click="emailCerts(['red'])">Expired Only</a></li>
+	    		<li><a style="cursor:pointer" ng-click="emailCerts(['yellow', 'red'])">Expired & Expiring</a></li>
+	  		</ul>
+		</div>
+	</div>
 	<br />
 	<br />
-	<table class="table table-condensed table-bordered" style="width:660px; margin:auto">
+	<table class="table table-condensed table-bordered" style="width:100%; margin:auto">
 		<thead>
 				<td><strong class="tableHead"><a ng-click="sortCerts=sortCertsBy('last_name')" style="cursor:pointer">Name</a></strong></td>
 				<td><strong class="tableHead">Email</strong></td>
 				<td><strong class="tableHead"><a ng-click="sortCerts=sortCertsBy('cert_date')" style="cursor:pointer">Latest Cert</a></strong></td>
+				<td></td>
 		</thead>
 		<tbody>
 			<tr ng-class="getCertClass(user.person_pk)" ng-repeat="user in facstaffDB | toArray | filter: certsFilter | orderBy: sortCerts">
@@ -35,6 +47,9 @@
 
 						</div>
 					
+				</td>
+				<td style='vertical-align:middle; width:140px'>
+					<button class="btn btn-danger btn-xs" style="margin-right:10px; margin-left:12px" ng-click="deleteUser(user)"><span class="glyphicon glyphicon-fire"></span> Delete Person</button>
 				</td>
 
 			</tr>
