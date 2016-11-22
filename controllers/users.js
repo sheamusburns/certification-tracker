@@ -13,42 +13,54 @@ app.controller('UsersCtrl', ['$http', '$scope', '$firebaseObject', '$moment', '$
 	var adminRef = firebase.database().ref('admin/');
 	$scope.facstaffDB = $firebaseObject(usersRef);
 	$scope.adminRef = $firebaseObject(adminRef);
+	
+	Object.size = function(obj) {
+    var size = 0, key;
+    for (key in obj) {
+        if (obj.hasOwnProperty(key)) size++;
+    }
+    return size;
+	};
+	
+	
+	
+	$scope.facstaff = [];
+	$scope.manualUsersAdded = [];
 	//$scope.adminRef = $firebaseObject(adminRef);
 	//$scope.authObj = $firebaseAuth(ref);
 
-	console.log($scope.facstaffDB)
+	//console.log($scope.facstaffDB)
 	console.log("controller still loading");
 	$scope.limitToDisplay = 20;
 
-	$scope.facstaffDB.$loaded().then($scope.reloadList);
-	
-	$scope.reloadList = function() {
+	$scope.facstaffDB.$loaded().then(function(){
+		console.log('woooohoooo');
 		angular.forEach($scope.facstaffDB, function(value, key) {
-			  var addedToManualUsers = false;
-	          if (Number(key) > 900000) {
-	          	console.log("its higher than 900000");
-	          	for (ind in $scope.manualUsersAdded) {
-	          		if ($scope.manualUsersAdded.length > 0 && $scope.manualUsersAdded[ind]['email_1'] === value['email_1']) {
-	          			addedToManualUsers = true;
-	          			console.log(val['email_1'] + " is in manualUsers");
-	          		}
-	          	}
-	          	if (addedToManualUsers === false) {
-	          		var userObj = {
-		          		email_1: value['email_1'],
+			var addedToManualUsers = false;
+	          // if (Number(key) > 900000) {
+	          // 	console.log("its higher than 900000");
+      	for (ind in $scope.manualUsersAdded) {
+      		if ($scope.manualUsersAdded.length > 0 && $scope.manualUsersAdded[ind]['email_1'] === value['email_1']) {
+      			addedToManualUsers = true;
+      			console.log(val['email_1'] + " is in manualUsers");
+      		}
+      	}
+      	if (addedToManualUsers === false) {
+
+      		var userObj = {
+        		email_1: value['email_1'],
 						last_name: value['last_name'],
 						nick_first_name: value['first_name'],
 						person_pk: key,
 						roles: "Faculty"
-		          	};
-		          	$scope.manualUsersAdded.push(userObj); 
-		          	console.log($scope.manualUsersAdded);
-		          	$scope.facstaff.push(userObj)
-		        }
-	         }  
+        	};
+        	$scope.manualUsersAdded.push(userObj); 
+        	console.log($scope.manualUsersAdded);
+        	$scope.facstaff.push(userObj)
+       	}
 	    });
-	}
-
+	  });
+	
 	$('#emlTxt, #emlSub').on('change', function() {
 				$scope.adminRef.$save();
 			});
@@ -106,13 +118,13 @@ app.controller('UsersCtrl', ['$http', '$scope', '$firebaseObject', '$moment', '$
 			email_1 : email
 			};
 
-			$scope.facstaff[id] = {
+			$scope.facstaff.push({
 	          		email_1: email,
 					last_name: lastName,
 					nick_first_name: firstName,
 					person_pk: id,
 					roles: "Faculty"
-	          	};
+	          	});
 
 			console.log("id: " + id);
 			$scope.facstaffDB[$scope.record.person_pk] = $scope.record;
@@ -130,19 +142,21 @@ app.controller('UsersCtrl', ['$http', '$scope', '$firebaseObject', '$moment', '$
 	$scope.generateUserId = function() {
 		return findLastNonVcrossUserId();
 		function findLastNonVcrossUserId() {
-			var hasUsers = false;
-			if ($scope.facstaffDB.length < 1) {
+			var hasUsers = true;
+			if (Object.size($scope.facstaffDB) < 1) {
 				hasUsers = false;
+				$scope.adminRef['id'] = 0;
+				$scope.adminRef.$save();
 			}
 			if (hasUsers === false) {
-				console.log("no manual users in the database");
-				$scope.adminRef['id'] = 1;
+				console.log("databse was empty");
+				$scope.adminRef['id']++;
 				$scope.adminRef.$save();
 				console.log($scope.adminRef.id);
 				return $scope.adminRef.id;
 			}
 			else if (hasUsers === true) {
-				console.log("database already has manual users");
+				console.log("database has more than 0 users");
 				$scope.adminRef['id'] += 1;
 				$scope.adminRef.$save();
 				console.log($scope.adminRef.id);
@@ -164,8 +178,15 @@ app.controller('UsersCtrl', ['$http', '$scope', '$firebaseObject', '$moment', '$
 	$scope.deleteUser = function(user) {
 		if (confirm("Are you sure you want to delete this? You can't undo this.")) {
 			delete $scope.facstaffDB[user.person_pk];
+			console.log("testing splice: " + $scope.facstaff.length);
+			for (var i = 0; i < $scope.facstaff.length; i++){
+				// console.log($scope.facstaff[i].person_pk == user);
+				if ($scope.facstaff[i].person_pk == user.person_pk) {
+					$scope.facstaff.splice(i, 1);
+				}
+			}
+			console.log("testing splice after: " + $scope.facstaff.length);
 			$scope.facstaffDB.$save();
-			$scope.facstaff.splice(user.person_pk, 1);
 		}
 	};
 
@@ -443,6 +464,6 @@ app.controller('UsersCtrl', ['$http', '$scope', '$firebaseObject', '$moment', '$
 	// 		$scope.facstaffDB.$save();
 	// 	}
 	// };
-
+	
 
 }]);
