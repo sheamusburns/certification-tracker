@@ -1,5 +1,5 @@
 <div class="facstaffHeader">
-	<div class="oneCertForm">
+	<div class="oneCertForm" style="margin-top:30px">
 		<form class="form-horizontal">
 			<div class="form-group">
 				<label class="col-sm-2 control-label">Date:</label>
@@ -7,15 +7,15 @@
 					<input name="date" ng-model="form.date" type="date" class="form-control">
 				</div>
 			</div>
-			<div class="form-group">
+			<!-- <div class="form-group">
 				<label class="control-label col-sm-2">Notes:</label>
 				<div class="col-sm-10">
 					<textarea name="notes" ng-model="form.notes" rows="1" class="form-control textA"></textarea>
 				</div>
-			</div>
+			</div> -->
 			<div class="form-group">
-				<div style="position:relative; left:210px">
-					<button class="btn btn-primary" style="height:35px" ng-click="saveCertDate(user, form.date, form.notes); form.notes=''; form.date=''">Save</button>
+				<div style="position:relative; left:200px">
+					<button class="btn btn-primary" style="height:35px" ng-click="saveCertDate(user, form.date); form.date=''">Save</button>
 				</div>
 			</div>
 		</form>

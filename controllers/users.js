@@ -1,12 +1,69 @@
 
-chaperone.controller('FacstaffCtrl', ['$http', '$scope', '$firebaseObject', '$moment', '$window', function($http, $scope, $firebaseObject, $moment, $window){
+app.controller('UsersCtrl', ['$http', '$scope', '$firebaseObject', '$moment', '$window', function($http, $scope, $firebaseObject, $moment, $window){
 	console.log("controller loading");
-	var ref = new Firebase('https://blinding-inferno-9862.firebaseio.com/facstaff');
-	$scope.facstaffDB = $firebaseObject(ref);
-
-	console.log("controller still loading");
+	firebase.auth().signInAnonymously().catch(function(error) {
+  // Handle Errors here.
+  var errorCode = error.code;
+  var errorMessage = error.message;
+  // ...
+	});
+	//$scope.authObj = $firebaseAuth(authRef);
 	
+	var usersRef = firebase.database().ref('users/');
+	var adminRef = firebase.database().ref('admin/');
+	$scope.facstaffDB = $firebaseObject(usersRef);
+	$scope.adminRef = $firebaseObject(adminRef);
+	//$scope.adminRef = $firebaseObject(adminRef);
+	//$scope.authObj = $firebaseAuth(ref);
+
+	console.log($scope.facstaffDB)
+	console.log("controller still loading");
 	$scope.limitToDisplay = 20;
+
+	$scope.facstaffDB.$loaded().then($scope.reloadList);
+	
+	$scope.reloadList = function() {
+		angular.forEach($scope.facstaffDB, function(value, key) {
+			  var addedToManualUsers = false;
+	          if (Number(key) > 900000) {
+	          	console.log("its higher than 900000");
+	          	for (ind in $scope.manualUsersAdded) {
+	          		if ($scope.manualUsersAdded.length > 0 && $scope.manualUsersAdded[ind]['email_1'] === value['email_1']) {
+	          			addedToManualUsers = true;
+	          			console.log(val['email_1'] + " is in manualUsers");
+	          		}
+	          	}
+	          	if (addedToManualUsers === false) {
+	          		var userObj = {
+		          		email_1: value['email_1'],
+						last_name: value['last_name'],
+						nick_first_name: value['first_name'],
+						person_pk: key,
+						roles: "Faculty"
+		          	};
+		          	$scope.manualUsersAdded.push(userObj); 
+		          	console.log($scope.manualUsersAdded);
+		          	$scope.facstaff.push(userObj)
+		        }
+	         }  
+	    });
+	}
+
+	$('#emlTxt, #emlSub').on('change', function() {
+				$scope.adminRef.$save();
+			});
+
+	// $scope.login = function(email, pass) {
+	// 	$scope.authObj.$authWithPassword({
+ //  			email: email,
+ //  			password: pass
+	// 	}).then(function(authData) {
+ //  			console.log("Logged in as:", authData.uid);
+	// 	}).catch(function(error) {
+ //  			console.error("Authentication failed:", error);
+	// 	});
+	// };
+
 
   	$scope.loadMore = function() {
   		if ($scope.facstaff){
@@ -39,12 +96,78 @@ chaperone.controller('FacstaffCtrl', ['$http', '$scope', '$firebaseObject', '$mo
 		}
 	};
 
+	$scope.saveNewUser = function(firstName, lastName, email) {
+		if ($scope.allEmailsToArray().indexOf(email) === -1){
+			var id = $scope.generateUserId();
+			$scope.record = {
+			person_pk : id,
+			first_name : firstName,
+			last_name : lastName,
+			email_1 : email
+			};
+
+			$scope.facstaff[id] = {
+	          		email_1: email,
+					last_name: lastName,
+					nick_first_name: firstName,
+					person_pk: id,
+					roles: "Faculty"
+	          	};
+
+			console.log("id: " + id);
+			$scope.facstaffDB[$scope.record.person_pk] = $scope.record;
+			$scope.facstaffDB.$save();
+
+			$scope.userForm.firstName='';
+			$scope.userForm.lastName='';
+			$scope.userForm.email=''
+
+
+		}
+		else alert("email address is already in the database, user was not created");
+	};
+   	
+	$scope.generateUserId = function() {
+		return findLastNonVcrossUserId();
+		function findLastNonVcrossUserId() {
+			var hasUsers = false;
+			if ($scope.facstaffDB.length < 1) {
+				hasUsers = false;
+			}
+			if (hasUsers === false) {
+				console.log("no manual users in the database");
+				$scope.adminRef['id'] = 1;
+				$scope.adminRef.$save();
+				console.log($scope.adminRef.id);
+				return $scope.adminRef.id;
+			}
+			else if (hasUsers === true) {
+				console.log("database already has manual users");
+				$scope.adminRef['id'] += 1;
+				$scope.adminRef.$save();
+				console.log($scope.adminRef.id);
+				return $scope.adminRef.id;
+			}
+		}
+	};
+
+	$scope.allEmailsToArray = function() {
+		var emailArray = [];
+		jQuery.each($scope.facstaffDB, function(ind, obj) {
+			if (Number(ind)) {
+				emailArray.push(obj['email_1']);
+			}
+		});
+		return emailArray;
+	};
+
 	$scope.deleteUser = function(user) {
 		if (confirm("Are you sure you want to delete this? You can't undo this.")) {
 			delete $scope.facstaffDB[user.person_pk];
 			$scope.facstaffDB.$save();
+			$scope.facstaff.splice(user.person_pk, 1);
 		}
-	}
+	};
 
 	$scope.saveCertDate = function(user, date, notes) {
 		if (!date) {
@@ -121,7 +244,7 @@ chaperone.controller('FacstaffCtrl', ['$http', '$scope', '$firebaseObject', '$mo
 	$scope.checkCert = function(person_pk) {
 		if ($scope.facstaffDB[person_pk] && $scope.facstaffDB[person_pk].certs){
 			var today = $moment();
-			var warning = $moment.duration(20, 'months');
+			var warning = $moment.duration(22, 'months');
 			var expiration = $moment.duration(24, 'months');
 			var latestCert = $moment($scope.getLatestCert(person_pk));
 			
@@ -285,8 +408,8 @@ chaperone.controller('FacstaffCtrl', ['$http', '$scope', '$firebaseObject', '$mo
 		}
 		console.log(emailArray.slice(','));
 		var mailTo = "mailto:" + emailArray.slice(',');
-		var mailSubject = "?subject=Need to Recertify CPR";
-		var mailBody = "&body=Time to get recertified!";
+		var mailSubject = "?subject=" + $scope.adminRef.emlSub;
+		var mailBody = "&body=" + $scope.adminRef.emlTxt;
 		$window.open(mailTo + mailSubject + mailBody);
 		if (errorArray.length > 0) {
 			alert("Warning: The following people do not have emails listed\n" + errorArray.slice(', '));

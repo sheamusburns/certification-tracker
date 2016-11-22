@@ -1,18 +1,18 @@
-chaperone.directive('createCert', function(){
+app.directive('createCert', function(){
 	return {
 		restrict: "E",
 		templateUrl: "views/createCert.html",
 	};
 });
 
-chaperone.directive('createOneCert', function(){
+app.directive('createOneCert', function(){
 	return {
 		restrict: "E",
 		templateUrl: "views/createOneCert.html",
 	};
 });
 
-chaperone.directive('createMultiCert', function(){
+app.directive('createMultiCert', function(){
 	return {
 		restrict: "E",
 		templateUrl: "views/createMultiCert.html",

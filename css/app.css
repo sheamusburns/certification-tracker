@@ -1,6 +1,12 @@
 body {
 	padding-top: 70px; 
 }
+.addUserInput input {
+	margin-right:20px;
+}
+.highlight {
+	background-color: yellow;
+}
 .bodyContainer {
 	margin-top: 1000px;
 }

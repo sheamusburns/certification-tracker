@@ -1,16 +1,18 @@
-<div style="margin:auto; width:900px; margin-top:20px" infinite-scroll="loadMore()" infinite-scroll-distance="1">
+<div style="margin:auto; width:900px" infinite-scroll="loadMore()" infinite-scroll-distance="1">
+	<add-user></add-user>
+	<h1>Search</h1>
 		<div class="searchContainer">
 			<form class="form-horizontal">
 				<div class="form-group">
-					<label class="control-label col-sm-2">Search:</label>  
+					
 					<div class="col-sm-1">
 						<input maxlength="17" class="searchBox form-control" ng-model="searchText">
 						<a class="searchX" style="cursor:pointer" ng-click="searchText=''"><span class="glyphicon glyphicon-remove-circle"></span></a> 
 					</div>
 				</div>
-			</form>
-			
+			</form>	
 		</div>
+		
 		<div class="table-responsive">
 			<table class="table table-hover facstaffTable">
 				<tbody>
