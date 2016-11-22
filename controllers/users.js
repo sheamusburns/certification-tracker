@@ -150,7 +150,7 @@ app.controller('UsersCtrl', ['$http', '$scope', '$firebaseObject', '$moment', '$
 			}
 			if (hasUsers === false) {
 				console.log("databse was empty");
-				$scope.adminRef['id']++;
+				$scope.adminRef['id'] = 1;
 				$scope.adminRef.$save();
 				console.log($scope.adminRef.id);
 				return $scope.adminRef.id;
